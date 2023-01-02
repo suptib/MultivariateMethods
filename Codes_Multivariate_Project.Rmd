@@ -1,0 +1,237 @@
+---
+title: "Multivariate Project"
+output: html_document
+date: "2022-12-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+rm(list=ls())
+data("wine")
+str(wine)
+data = wine[-c(1)]
+head(data)
+```
+
+```{r}
+dim(data)
+data_pca = prcomp(data,scale=TRUE)
+summary(data_pca)
+```
+
+
+```{r}
+screeplot(data_pca,type="lines")
+```
+
+
+From the screeplot, we see that the first 3 Principal components are enough to explain the variations among the variables. So, almost 67% variance will be explained by these 3 principal components. 
+
+
+```{r}
+install.packages("factoextra")
+install.packages("ggplot2")
+library(ggplot2)
+library(factoextra)
+fviz_pca_var(data_pca)
+```
+
+From the loading vectors plot and biplot, we see that Ash(V3), Color intensity(V10), Alchohol(V1), Magnesium(V5) and Proline(V13) are highly correlated and they are forming the first principal component that explains around 37% of variation of the whole dataset. 
+
+On the other hand Alcalinity of Ash(V4), Nonflavanoids Phenols(V8), Total Phenols(V6), Flavanoids(V7), Proanthocyanins(V9), Hue(V11) and OD280/OD315 of Diluted Wines(V12) variables are highly correlated with each other and forming the second principal component that explains around 20% of the total variation of the dataset. 
+
+
+```{r}
+fviz_pca_ind(data_pca)
+```
+
+```{r}
+fviz_pca(data_pca)
+```
+
+## Canonical Correlation 
+
+To conduct canonical correlation, we need two sets of variable. From the Proncipal Component Ananlysis, I have taken 4 variables from each principal components which are mostly correlated to each other and trying to see the canonical correlation among them. 
+
+```{r}
+library(CCA)
+install.packages("tidyverse")
+library(tidyverse)
+X = cbind(data$V3, data$V10, data$V1, data$V5)
+Y = cbind(data$V4, data$V8, data$V7, data$V9)
+?cc
+cc_results = cc(X,Y)
+cc_results
+cc_results$cor
+```
+
+```{r}
+barplot(cc_results$cor, main = "Canonical correlations ", col = "gray")
+?plt.cc
+```
+
+
+Here is the graph showing canonical correlation among the 4 variables belonging to each of the 2 groups.  
+
+
+```{r}
+plt.cc(cc_results, type = "b")
+```
+
+
+```{r}
+str(cc_results)
+```
+
+```{r}
+cc_results$xcoef
+```
+
+```{r}
+cc_results$ycoef
+```
+
+```{r}
+cc_results$cor
+?corrplot
+```
+
+```{r}
+library(CCA)
+library(ggplot2)
+library(corrplot)
+library(ggcorrplot)
+colnames(data)
+pairs(data)
+```
+
+
+```{r}
+library(psych)
+corPlot(cor(data), method="circle", type = "full")
+```
+
+```{r}
+library(nFactors)
+ev = eigen(cor(data))
+nS = nScree(x=ev$values)
+plotnScree(nS, legend = F)
+FA = fa(cor(data), nfactors = 3, fm = "mle", scores = "regression", rotate = "oblimin")
+FA
+FA$loadings
+summary(FA)
+```
+
+
+To group the variables, I will take 3 factors based on the criteria that the eigen values are greater than 1. The green triangles in the above graph is showing the line where eigen value is 1. 
+
+
+```{r}
+fa.diagram(FA)
+print(ev$values)
+```
+
+
+```{r}
+?factanal
+model = factanal(data, 3, rotation = "varimax")
+model
+```
+
+
+```{r}
+print(model, digits=2, cutoff=0.3, sort=T)
+summary(model$loadings)
+```
+
+
+```{r}
+data_matrix = as.matrix(data)
+data_matrix
+dist(data_matrix, diag = TRUE, upper = TRUE)
+dist(data_matrix)
+```
+
+```{r}
+df = cbind(data$V6, data$V7, data$V9, data$V11, data$V12)
+df1 = scale(df)
+df2 = head(df1, nrow = 6)
+df2
+dist = dist(df2, method = "euclidean")
+dist
+as.matrix(dist)
+```
+
+```{r}
+res.hc = hclust(d = dist, method = "ward.D2")
+res.hc
+plot(res.hc)
+```
+
+```{r}
+library("factoextra")
+fviz_dend(res.hc, cex = 0.5)
+```
+
+```{r}
+res.coph <- cophenetic(res.hc)
+res.coph
+cor(dist, res.coph)
+```
+
+```{r}
+datanew = as.matrix(data)
+fviz_nbclust(datanew, FUNcluster = hcut, method = "silhouette", k.max = 10)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
