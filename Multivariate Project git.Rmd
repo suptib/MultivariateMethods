@@ -1,0 +1,69 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+load("D:/MS/STA 541 (Multivariate Statistical Methods)/PCcars.Rdata")
+x=PCcars
+x
+fit=prcomp(x, scale=TRUE)
+fit
+```
+
+```{r}
+fit$rotation
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+(fit$sdev)^2   #Variance of the components 
+```
+
+```{r}
+summary(fit)
+```
+
+```{r}
+screeplot(fit, type= "lines")
+```
+
+
+
+I would keep the first 3 components for this analysis. From the summary, we see that almost 91% of variation is explained by the first 3 components. We can also see the evidence from the screeplot diagram. 
+
+PC1 - Different features of cars (cyl, disp, hp)
+PC2 - Fuel consumption of cars (Miles per (US) gallon)
+
+
+```{r}
+library(ggplot2)
+library(factoextra)
+fviz_pca_var(fit)
+```
+
+```{r}
+fviz_mfa_ind(fit)
+```
+
+```{r}
+fviz_pca(fit)
+```
+
+Types of Car at the bottom have more more fuel consumption rate.
+Types of Car at right have have high number of cylinders ('cyl'), high Displacement ('disp') and high number of Gross horsepower ('hp').
+Types of Car close to zero on both components have approximately average levels of both features of cars and fuel consumption. 
+
+
+
+
+
+
+
+
