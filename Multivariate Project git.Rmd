@@ -20,7 +20,7 @@ fit
 fit$rotation
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot. Something to be deleted.
 
 ```{r}
 (fit$sdev)^2   #Variance of the components 
