@@ -1,6 +1,6 @@
 ---
 title: "Multivariate Project"
-output: html_document
+output: github_document
 date: "2022-12-16"
 ---
 
